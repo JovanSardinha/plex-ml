@@ -4,6 +4,11 @@ import datetime as dt
 import time
 import math
 import numpy as np
+import random
+from sklearn.cross_validation import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+from sklearn.grid_search import GridSearchCV
 import matplotlib.pyplot as plt
 import matplotlib.dates as md
 
@@ -48,15 +53,17 @@ df_acceleration['acceleration_magnitude'] = np.vectorize(acceleration_magnitude)
 
 #df_acceleration['fft'] = np.fft.fft(df_acceleration['acceleration_magnitude'])
 
+'''
+# playing with STFT (https://kevinsprojects.wordpress.com/2014/12/13/short-time-fourier-transform-using-python-and-numpy/)
+
+# Prep
 tdf = df_acceleration['acceleration_magnitude'].copy()
 data = tdf
 fft_size = 250
 overlap_fac = 0.5
 
 
-
-
-# playing with STFT (https://kevinsprojects.wordpress.com/2014/12/13/short-time-fourier-transform-using-python-and-numpy/)
+# Actual
 hop_size = np.int32(np.floor(fft_size * (1-overlap_fac)))
 pad_end_size = fft_size          # the last segment can overlap the end of the data array by no more than one window size
 total_segments = np.int32(np.ceil(len(data) / np.float32(hop_size)))
@@ -81,7 +88,24 @@ result = np.clip(result, -40, 200)    # clip values
 
 img = plt.imshow(result, origin='lower', cmap='jet', interpolation='nearest', aspect='auto')
 plt.show()
+'''
 
+
+# Data Splitting
+df_total = df_acceleration[['isDriving', 'x', 'y', 'z', 'acceleration_magnitude']].copy()
+df_total['isDriving'] = df_total['isDriving'].map({'true': 1, 'false': 0}).astype(int)
+data_total = df_total.values
+data_train, data_test = train_test_split(data_total, test_size=0.50, random_state=42)
+
+# Model Building
+model = SVC()
+model = model.fit(data_train[:,1:], data_train[:,0])
+
+# Predicting
+output = model.predict(data_test[:,1:])
+
+# Accuracy
+accuracy = accuracy_score(data_test[:,0], output)
 
 
 ##################################
