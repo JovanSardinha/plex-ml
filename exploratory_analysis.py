@@ -4,7 +4,6 @@ import datetime as dt
 import time
 import math
 import numpy as np
-import random
 from sklearn.cross_validation import train_test_split
 from sklearn.svm import SVC
 import sklearn.metrics as skm
@@ -53,51 +52,13 @@ def acceleration_magnitude(x,y,z):
 
 df_acceleration['acceleration_magnitude'] = np.vectorize(acceleration_magnitude)(df_acceleration['x'],df_acceleration['y'],df_acceleration['z'])
 
-#df_acceleration['fft'] = np.fft.fft(df_acceleration['acceleration_magnitude'])
-
-'''
-# playing with STFT (https://kevinsprojects.wordpress.com/2014/12/13/short-time-fourier-transform-using-python-and-numpy/)
-
-# Prep
-tdf = df_acceleration['acceleration_magnitude'].copy()
-data = tdf
-fft_size = 250
-overlap_fac = 0.5
-
-
-# Actual
-hop_size = np.int32(np.floor(fft_size * (1-overlap_fac)))
-pad_end_size = fft_size          # the last segment can overlap the end of the data array by no more than one window size
-total_segments = np.int32(np.ceil(len(data) / np.float32(hop_size)))
-
-window = np.hanning(fft_size)  # our half cosine window
-inner_pad = np.zeros(fft_size) # the zeros which will be used to double each segment size
-
-proc = np.concatenate((data, np.zeros(pad_end_size)))              # the data to process
-result = np.empty((total_segments, fft_size), dtype=np.float32)    # space to hold the result
-
-for i in xrange(total_segments):                      # for each segment
-    current_hop = hop_size * i                        # figure out the current segment offset
-    segment = proc[current_hop:current_hop+fft_size]  # get the current segment
-    windowed = segment * window                       # multiply by the half cosine function
-    padded = np.append(windowed, inner_pad)           # add 0s to double the length of the data
-    spectrum = np.fft.fft(padded) / fft_size          # take the Fourier Transform and scale by the number of samples
-    autopower = np.abs(spectrum * np.conj(spectrum))  # find the autopower spectrum
-    result[i, :] = autopower[:fft_size]               # append to the results array
-
-result = 20*np.log10(result)          # scale to db
-result = np.clip(result, -40, 200)    # clip values
-
-img = plt.imshow(result, origin='lower', cmap='jet', interpolation='nearest', aspect='auto')
-plt.show()
-'''
-
 
 # Data Splitting
+# Notes: Using the data split as advised by Andrew Ng. ->  20% Test, 20% CV 60% Train
 df_total = df_acceleration[['isDriving', 'x', 'y', 'z', 'acceleration_magnitude']].copy()
 df_total['isDriving'] = df_total['isDriving'].map({'true': 1, 'false': 0}).astype(int)
 data_total = df_total.values
-data_train, data_test = train_test_split(data_total, test_size=0.33, random_state=42)
+data_train, data_test = cross_validation.train_test_split(data_total, test_size=0.20, random_state=13)
 
 # Model Building
 model = SVC()
