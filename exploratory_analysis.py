@@ -121,14 +121,10 @@ roc_auc = skm.roc_auc_score(data_test[:,0], output)
 log_loss = skm.log_loss(data_test[:,0], output)
 
 
-### CHANGE
 # Training Curves
-cv = cross_validation.ShuffleSplit(data_train.shape[0], n_iter=10,test_size=0.2, random_state=0)
-train_sizes, train_scores, valid_scores = learning_curve(estimator=model, X=data_train[:,1:], y=data_train[:,0], cv=cv)
-
 
 def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
-                        n_jobs=1, train_sizes=np.linspace(.1, 1.0, 5)):
+                        n_jobs=1, train_sizes=np.linspace(.1, 1.0, 50)):
     """
     Generate a simple plot of the test and traning learning curve.
 
@@ -185,6 +181,9 @@ def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
 
     plt.legend(loc="best")
     return plt
+
+cv = cross_validation.ShuffleSplit(data_train.shape[0], n_iter=6,test_size=0.2, random_state=0)
+train_sizes, train_scores, valid_scores = learning_curve(estimator=model, X=data_train[:,1:], y=data_train[:,0], cv=cv)
 
 plot_learning_curve(model, "Plex.ai Test", X=data_train[:,1:], y=data_train[:,0], cv=cv )
 ##################################
