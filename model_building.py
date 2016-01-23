@@ -12,6 +12,7 @@ from sklearn.grid_search import GridSearchCV
 import matplotlib.pyplot as plt
 import matplotlib.dates as md
 from sklearn.learning_curve import learning_curve
+from sklearn.externals import joblib
 
 time_start = time.time()
 ###############################
@@ -67,6 +68,10 @@ model = model.fit(data_train[:,1:], data_train[:,0])
 # Predicting
 output = model.predict(data_test[:,1:])
 
+# Saving the model
+joblib.dump(model, './model/plex_model.pkl')
+
+
 # Parameters:
 # Base Parameters
 accuracy = skm.accuracy_score(data_test[:,0], output)
@@ -82,6 +87,7 @@ roc_auc = skm.roc_auc_score(data_test[:,0], output)
 log_loss = skm.log_loss(data_test[:,0], output)
 
 
+'''
 # Training Curves
 
 def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
@@ -147,6 +153,8 @@ cv = cross_validation.ShuffleSplit(data_train.shape[0], n_iter=6,test_size=0.2, 
 train_sizes, train_scores, valid_scores = learning_curve(estimator=model, X=data_train[:,1:], y=data_train[:,0], cv=cv)
 
 plot_learning_curve(model, "Plex.ai Test", X=data_train[:,1:], y=data_train[:,0], cv=cv )
+'''
+
 ##################################
 time_end = time.time()
 time_total = time_end - time_start
