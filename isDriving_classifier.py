@@ -25,8 +25,11 @@ collection_acceleration = db['linearAcceleration']
 df_acceleration = pd.DataFrame(list(collection_acceleration.find()))
 
 # Step 2: Data pre-processing
-time_converter = lambda x: datetime.datetime.fromtimestamp(float(x)/1000)
+time_converter = lambda x: datetime.datetime.utcfromtimestamp(float(x)/1000) if float(x) > 1000000000000 \
+    else datetime.datetime.utcfromtimestamp(float(x))
+
 df_acceleration['timestamp'] = df_acceleration['timestamp'].map(time_converter)
+df_acceleration['lastModified'] = df_acceleration['lastModified'].map(time_converter)
 
 # Function to calculate force magnitude
 def acceleration_magnitude(x,y,z):

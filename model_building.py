@@ -45,7 +45,10 @@ df_acceleration = pd.DataFrame(list(collection_acceleration.find()))
 #df_rotation = pd.DataFrame(list(collection_rotation.find()))
 
 # Step 2: Data pre-processing
-time_converter = lambda x: datetime.datetime.fromtimestamp(float(x)/1000)
+time_converter = lambda x: datetime.datetime.utcfromtimestamp(float(x)/1000) if float(x) > 1000000000000 \
+    else datetime.datetime.utcfromtimestamp(float(x))
+
+df_acceleration['lastModified'] = df_acceleration['lastModified'].map(time_converter)
 
 df_acceleration['timestamp'] = df_acceleration['timestamp'].map(time_converter)
 #df_gyroscope['timestamp'] = df_gyroscope['timestamp'].map(time_converter)
