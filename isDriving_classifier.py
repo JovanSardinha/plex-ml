@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 import pandas as pd
-import datetime as dt
+import datetime
 import time
 import math
 import numpy as np
@@ -13,6 +13,8 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as md
 from sklearn.learning_curve import learning_curve
 from sklearn.externals import joblib
+import datetime
+from bson.objectid import ObjectId
 
 time_start = time.time()
 ###############################
@@ -20,14 +22,14 @@ time_start = time.time()
 # Working example with pymongo
 #mongo_uri = 'mongodb://%s:%s@%s:%s/%s' % (username, password, host, port, db)
 client = MongoClient('40.122.215.160')
-db = client['test']
+db = client['archive[2016-01-25@14:28ET]_test']
 
 collection_acceleration = db['linearAcceleration']
 
 df_acceleration = pd.DataFrame(list(collection_acceleration.find()))
 
 # Data Processing
-time_converter = lambda x: dt.datetime.fromtimestamp(float(x)/1000)
+time_converter = lambda x: datetime.datetime.fromtimestamp(float(x)/1000)
 
 df_acceleration['timestamp'] = df_acceleration['timestamp'].map(time_converter)
 
@@ -48,7 +50,21 @@ model = joblib.load('./model/plex_model.pkl')
 output = model.predict(data_total[:,1:])
 
 # Combining with data fame
-df_acceleration['predicted'] = output
+df_acceleration['isDriving_predicted'] = output
+#df_acceleration['lastModified'] = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+
+# Updating mongo
+i = 0
+for i in range(0, df_acceleration.shape[0]):
+    result = collection_acceleration.update_one({
+        '_id': df_acceleration['_id'][i]},
+            {
+                '$set': {'isDriving_predicted': df_acceleration['isDriving_predicted'][i]}, "$currentDate": {"lastModified": True}
+            }, upsert = False)
+    print result.matched_count
+    print "i: " + str(i)
+
+
 ##################################
 time_end = time.time()
 time_total = time_end - time_start

@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 import pandas as pd
-import datetime as dt
+import datetime
 import time
 import math
 import numpy as np
@@ -34,12 +34,12 @@ collection_acceleration = db['acceleration']
 df_acceleration = pd.DataFrame(list(collection_acceleration.find()))
 #df_gyroscope = pd.DataFrame(list(collection_gyroscope.find()))
 #df_linearAcceleration = pd.DataFrame(list(collection_linearAcceleration.find()))
-#df_magnetic = pd.DataFrame(list(collection_magnetic.find()))
+#df_magnetic =` pd.DataFrame(list(collection_magnetic.find()))
 #df_orientation = pd.DataFrame(list(collection_orientation.find()))
 #df_rotation = pd.DataFrame(list(collection_rotation.find()))
 
 
-time_converter = lambda x: dt.datetime.fromtimestamp(float(x)/1000)
+time_converter = lambda x: datetime.datetime.fromtimestamp(float(x)/1000)
 
 df_acceleration['timestamp'] = df_acceleration['timestamp'].map(time_converter)
 #df_gyroscope['timestamp'] = df_gyroscope['timestamp'].map(time_converter)
