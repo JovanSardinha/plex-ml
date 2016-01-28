@@ -54,6 +54,7 @@ df_acceleration['isDriving_predicted'] = output
 df_acceleration['isDriving_predicted'] = df_acceleration['isDriving_predicted'].map({0: 'false', 1: 'true'})
 df_acceleration['lastModified'] = time.time() # Note: this time stamp is in Epoch time to match other time stamps
 
+
 # Step 6: Updating mongo to reflect changes
 i = 0
 for i in range(0, df_acceleration.shape[0]):

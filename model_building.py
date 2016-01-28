@@ -26,10 +26,10 @@ time_start = time.time()
 # Step 1: Reading data from mongo
 #mongo_uri = 'mongodb://%s:%s@%s:%s/%s' % (username, password, host, port, db) # For future refrence incase we add username and password to DB
 client = MongoClient('40.122.215.160')
-db = client['archive[2016-01-13@13:08ET]_test']
+db = client['test']
 
 # Reading data from collections
-collection_acceleration = db['acceleration']
+collection_acceleration = db['linearAcceleration']
 #collection_gyroscope = db['gyroscope']
 #collection_linearAcceleration = db['linearAcceleration']
 #collection_magnetic = db['magnetic']
@@ -48,7 +48,7 @@ df_acceleration = pd.DataFrame(list(collection_acceleration.find()))
 time_converter = lambda x: datetime.datetime.utcfromtimestamp(float(x)/1000) if float(x) > 1000000000000 \
     else datetime.datetime.utcfromtimestamp(float(x))
 
-df_acceleration['lastModified'] = df_acceleration['lastModified'].map(time_converter)
+#df_acceleration['lastModified'] = df_acceleration['lastModified'].map(time_converter)
 
 df_acceleration['timestamp'] = df_acceleration['timestamp'].map(time_converter)
 #df_gyroscope['timestamp'] = df_gyroscope['timestamp'].map(time_converter)
@@ -158,10 +158,10 @@ def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
     plt.legend(loc="best")
     return plt
 
-cv = cross_validation.ShuffleSplit(data_train.shape[0], n_iter=6,test_size=0.2, random_state=0)
+cv = cross_validation.ShuffleSplit(data_train.shape[0], n_iter=5,test_size=0.2, random_state=13)
 train_sizes, train_scores, valid_scores = learning_curve(estimator=model, X=data_train[:,1:], y=data_train[:,0], cv=cv)
 
-plot_learning_curve(model, "Plex.ai Test", X=data_train[:,1:], y=data_train[:,0], cv=cv )
+plot_learning_curve(model, "Plex.ai: ML Model 0", X=data_train[:,1:], y=data_train[:,0], cv=cv )
 
 ##################################
 # End of script: The following is used to calculate total run times
