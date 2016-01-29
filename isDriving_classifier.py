@@ -9,6 +9,7 @@ import math
 import numpy as np
 from sklearn.externals import joblib
 import datetime
+import sklearn.metrics as skm
 
 # Used to time the total script run time.
 # Notes: Average (historic) run times of the script = ~2 seconds
@@ -18,7 +19,7 @@ time_start = time.time()
 # Step 1: Reading from Mongo DB
 # Notes: mongo_uri = 'mongodb://%s:%s@%s:%s/%s' % (username, password, host, port, db)
 client = MongoClient('40.122.215.160')
-db = client['archive[2016-01-25@14:28ET]_test']
+db = client['test']
 collection_acceleration = db['linearAcceleration']
 
 # Putting data into a pandas data frame for easy manipulation
@@ -53,7 +54,6 @@ output = model.predict(data_total[:,1:])
 df_acceleration['isDriving_predicted'] = output
 df_acceleration['isDriving_predicted'] = df_acceleration['isDriving_predicted'].map({0: 'false', 1: 'true'})
 df_acceleration['lastModified'] = time.time() # Note: this time stamp is in Epoch time to match other time stamps
-
 
 # Step 6: Updating mongo to reflect changes
 i = 0

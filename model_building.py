@@ -77,6 +77,7 @@ model = model.fit(data_train[:,1:], data_train[:,0])
 # Step 5: Predicting
 output = model.predict(data_test[:,1:])
 
+
 # Step 6: Saving the model
 joblib.dump(model, './model/plex_model.pkl')
 
@@ -161,7 +162,7 @@ def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
 cv = cross_validation.ShuffleSplit(data_train.shape[0], n_iter=5,test_size=0.2, random_state=13)
 train_sizes, train_scores, valid_scores = learning_curve(estimator=model, X=data_train[:,1:], y=data_train[:,0], cv=cv)
 
-plot_learning_curve(model, "Plex.ai: ML Model 0", X=data_train[:,1:], y=data_train[:,0], cv=cv )
+plot_learning_curve(model, "Plex.ai: ML Model 1", X=data_train[:,1:], y=data_train[:,0], cv=cv )
 
 ##################################
 # End of script: The following is used to calculate total run times
