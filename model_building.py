@@ -62,6 +62,15 @@ def acceleration_magnitude(x,y,z):
 
 df_acceleration['acceleration_magnitude'] = np.vectorize(acceleration_magnitude)(df_acceleration['x'],df_acceleration['y'],df_acceleration['z'])
 
+# Selecting only subset of the data
+df_acceleration = df_acceleration[(df_acceleration['userId'] == "a-test-0") |
+                                  (df_acceleration['userId'] == "i-test-0") |
+                                  (df_acceleration['userId'] == "i-test-1") |
+                                  (df_acceleration['userId'] == "a-test-1") |
+                                  (df_acceleration['userId'] == "i-test-4") |
+                                  (df_acceleration['userId'] == "a-test-4") ]
+                                  #(df_acceleration['userId'] == "i-test-5") |
+                                  #(df_acceleration['userId'] == "a-test-5")]
 
 # Step 3: Data Splitting
 # Notes: Using the data split as advised by Andrew Ng. ->  20% Test, 20% CV 60% Train
@@ -96,6 +105,12 @@ roc_auc = skm.roc_auc_score(data_test[:,0], output)
 # Parameters - Losses
 log_loss = skm.log_loss(data_test[:,0], output)
 
+# Post-Analysis
+# Plotting
+#time_cleaner = lambda x: x.strftime('%b %d,%Y')
+#df_acceleration['hour'] = df_acceleration['timestamp'].map(time_cleaner)
+df_acceleration.groupby(['timestamp', 'userId']).size()
+plt.plot(df_acceleration['timestamp'], df_acceleration['acceleration_magnitude'])
 
 
 # Training Curves

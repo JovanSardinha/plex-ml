@@ -10,6 +10,7 @@ import numpy as np
 from sklearn.externals import joblib
 import datetime
 import sklearn.metrics as skm
+import matplotlib.pyplot as plt
 
 # Used to time the total script run time.
 # Notes: Average (historic) run times of the script = ~2 seconds
@@ -30,7 +31,7 @@ time_converter = lambda x: datetime.datetime.utcfromtimestamp(float(x)/1000) if 
     else datetime.datetime.utcfromtimestamp(float(x))
 
 df_acceleration['timestamp'] = df_acceleration['timestamp'].map(time_converter)
-df_acceleration['lastModified'] = df_acceleration['lastModified'].map(time_converter)
+#df_acceleration['lastModified'] = df_acceleration['lastModified'].map(time_converter)
 
 # Function to calculate force magnitude
 def acceleration_magnitude(x,y,z):
@@ -55,6 +56,8 @@ df_acceleration['isDriving_predicted'] = output
 df_acceleration['isDriving_predicted'] = df_acceleration['isDriving_predicted'].map({0: 'false', 1: 'true'})
 df_acceleration['lastModified'] = time.time() # Note: this time stamp is in Epoch time to match other time stamps
 
+
+'''
 # Step 6: Updating mongo to reflect changes
 i = 0
 for i in range(0, df_acceleration.shape[0]):
@@ -64,7 +67,7 @@ for i in range(0, df_acceleration.shape[0]):
                 '$set': {'isDriving_predicted': df_acceleration['isDriving_predicted'][i],
                          'lastModified':df_acceleration['lastModified'][i]}
             }, upsert = False)
-
+'''
 ##################################
 # End of script: The following is used to calculate total run times
 time_end = time.time()
